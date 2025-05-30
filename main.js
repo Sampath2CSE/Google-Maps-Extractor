@@ -1,12 +1,12 @@
 // main.js - Google Maps Extractor Apify Actor
-const Apify = require('apify');
-const { CheerioCrawler, log } = Apify;
+const { Actor, log } = require('apify');
+const { CheerioCrawler } = require('crawlee');
 
 // Geolocation utilities
 class GeolocationHelper {
     static async getCoordinates(location) {
         try {
-            const response = await Apify.utils.requestAsBrowser({
+            const response = await Actor.utils.requestAsBrowser({
                 url: `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
             });
             
@@ -193,8 +193,8 @@ class StatsTracker {
 }
 
 // Main actor logic
-Apify.main(async () => {
-    const input = await Apify.getInput();
+Actor.main(async () => {
+    const input = await Actor.getInput();
     const { 
         searchTerm, 
         location, 
@@ -229,7 +229,7 @@ Apify.main(async () => {
         log.info('*** GEOLOCATION FINISHED ***');
         
         // Step 3: Set up crawler
-        const requestQueue = await Apify.openRequestQueue();
+        const requestQueue = await Actor.openRequestQueue();
         
         // Enqueue search URLs for each segment (limit to prevent overwhelming)
         const segmentsToProcess = mapSegments.slice(0, Math.min(mapSegments.length, 10));
@@ -307,7 +307,7 @@ Apify.main(async () => {
                         uniqueCount++;
                         
                         // Save to dataset
-                        await Apify.pushData(place);
+                        await Actor.pushData(place);
                     }
                     
                     // Simulate some duplicates for realism
