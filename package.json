@@ -1,0 +1,48 @@
+{
+  "name": "google-maps-extractor",
+  "version": "1.0.0",
+  "description": "Extract data from thousands of Google Maps locations and businesses. Get Google Maps data including reviews, reviewer details, images, contact info, opening hours, location, prices & more.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Your Name",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "apify": "^3.1.10",
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^21.5.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0"
+  },
+  "keywords": [
+    "apify",
+    "google-maps",
+    "scraper",
+    "extractor",
+    "places",
+    "businesses",
+    "reviews",
+    "restaurants",
+    "locations",
+    "geocoding"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/google-maps-extractor"
+  },
+  "apify": {
+    "actorSpecification": 1,
+    "name": "google-maps-extractor",
+    "title": "Google Maps Extractor",
+    "description": "Extract data from thousands of Google Maps locations and businesses. Get Google Maps data including reviews, reviewer details, images, contact info, opening hours, location, prices & more.",
+    "version": "1.0",
+    "meta": {
+      "templateId": "google-maps-extractor"
+    },
+    "input": "./input_schema.json",
+    "dockerfile": "./Dockerfile"
+  }
+}

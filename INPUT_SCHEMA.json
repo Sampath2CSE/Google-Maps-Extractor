@@ -1,0 +1,132 @@
+{
+  "title": "Google Maps Extractor",
+  "description": "Extract data from thousands of Google Maps locations and businesses. Our base charge for Google Maps is just $4 per 1,000 places.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "searchTerm": {
+      "title": "🔍 Search term",
+      "type": "string",
+      "description": "What to search for (e.g., 'restaurant', 'hotel', 'dentist', 'coffee shop')",
+      "example": "restaurant",
+      "editor": "textfield"
+    },
+    "location": {
+      "title": "📍 Location",
+      "type": "string", 
+      "description": "City, state, country or specific address where to search",
+      "example": "New York, USA",
+      "editor": "textfield"
+    },
+    "maxResults": {
+      "title": "💯 Number of places",
+      "type": "integer",
+      "description": "Maximum number of places to extract",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 10000,
+      "editor": "number"
+    },
+    "zoom": {
+      "title": "🔍 Zoom level",
+      "type": "integer",
+      "description": "Higher zoom extracts more places but takes exponentially longer. Default zoom is automatically chosen based on location size.",
+      "default": 15,
+      "minimum": 10,
+      "maximum": 21,
+      "editor": "number"
+    },
+    "includeReviews": {
+      "title": "💬 Include reviews ($)",
+      "type": "boolean",
+      "description": "Extract customer reviews for each place (additional cost - marked with $ sign)",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "includeImages": {
+      "title": "🖼️ Include images ($)",
+      "type": "boolean",
+      "description": "Extract business photos and images (additional cost - marked with $ sign)",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "minStars": {
+      "title": "⭐ Minimum rating",
+      "type": "number",
+      "description": "Only extract places with this rating or higher (0-5 stars)",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 0,
+      "editor": "number"
+    },
+    "categoryFilter": {
+      "title": "🏷️ Category filter ($)",
+      "type": "array",
+      "description": "Filter results by specific business categories (additional cost - marked with $ sign)",
+      "items": {
+        "type": "string"
+      },
+      "editor": "stringList"
+    },
+    "maxCrawledPlacesPerSearch": {
+      "title": "🚀 Max places per search term",
+      "type": "integer",
+      "description": "Maximum number of places to crawl for each search term before moving to next area",
+      "default": 50,
+      "minimum": 10,
+      "maximum": 1000,
+      "editor": "number"
+    },
+    "includePricing": {
+      "title": "💰 Include pricing info ($)",
+      "type": "boolean",
+      "description": "Extract price level and cost information when available (additional cost)",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "includeOpeningHours": {
+      "title": "🕒 Include opening hours ($)",
+      "type": "boolean", 
+      "description": "Extract business opening hours and schedule (additional cost)",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "onlyOpen": {
+      "title": "🔓 Only open businesses",
+      "type": "boolean",
+      "description": "Only extract businesses that are currently open",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "excludeChains": {
+      "title": "🏪 Exclude chain businesses",
+      "type": "boolean",
+      "description": "Exclude large chain businesses (McDonald's, Starbucks, etc.)",
+      "default": false,
+      "editor": "checkbox"
+    }
+  },
+  "required": ["searchTerm", "location"],
+  "groups": [
+    {
+      "title": "🔍 Basic Search Settings",
+      "description": "Enter your search term, location, and number of places to extract",
+      "properties": ["searchTerm", "location", "maxResults"]
+    },
+    {
+      "title": "🔍 Search Filters & Categories",
+      "description": "Various extra features, filters, and sorting options. Options marked with ($) incur additional cost.",
+      "properties": ["minStars", "categoryFilter", "onlyOpen", "excludeChains"]
+    },
+    {
+      "title": "💰 Additional Data ($)",
+      "description": "Premium features that extract additional data. Each option marked with ($) incurs incremental cost.",
+      "properties": ["includeReviews", "includeImages", "includePricing", "includeOpeningHours"]
+    },
+    {
+      "title": "⚙️ Advanced Settings", 
+      "description": "Technical settings for power users",
+      "properties": ["zoom", "maxCrawledPlacesPerSearch"]
+    }
+  ]
+}
