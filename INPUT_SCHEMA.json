@@ -52,7 +52,7 @@
     },
     "minStars": {
       "title": "⭐ Minimum rating",
-      "type": "number",
+      "type": "integer",
       "description": "Only extract places with this rating or higher (0-5 stars)",
       "minimum": 0,
       "maximum": 5,
