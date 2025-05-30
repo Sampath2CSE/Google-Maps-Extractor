@@ -64,9 +64,32 @@
       "type": "array",
       "description": "Filter results by specific business categories (additional cost - marked with $ sign)",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "Restaurant",
+          "Fast Food",
+          "Cafe",
+          "Bar",
+          "Hotel",
+          "Gas Station",
+          "Hospital",
+          "Pharmacy",
+          "Bank",
+          "ATM",
+          "Shopping Mall",
+          "Grocery Store",
+          "Gym",
+          "Beauty Salon",
+          "Car Repair",
+          "School",
+          "Park",
+          "Museum",
+          "Library",
+          "Church"
+        ]
       },
-      "editor": "stringList"
+      "editor": "select",
+      "default": []
     },
     "maxCrawledPlacesPerSearch": {
       "title": "🚀 Max places per search term",
@@ -106,27 +129,5 @@
       "editor": "checkbox"
     }
   },
-  "required": ["searchTerm", "location"],
-  "groups": [
-    {
-      "title": "🔍 Basic Search Settings",
-      "description": "Enter your search term, location, and number of places to extract",
-      "properties": ["searchTerm", "location", "maxResults"]
-    },
-    {
-      "title": "🔍 Search Filters & Categories",
-      "description": "Various extra features, filters, and sorting options. Options marked with ($) incur additional cost.",
-      "properties": ["minStars", "categoryFilter", "onlyOpen", "excludeChains"]
-    },
-    {
-      "title": "💰 Additional Data ($)",
-      "description": "Premium features that extract additional data. Each option marked with ($) incurs incremental cost.",
-      "properties": ["includeReviews", "includeImages", "includePricing", "includeOpeningHours"]
-    },
-    {
-      "title": "⚙️ Advanced Settings", 
-      "description": "Technical settings for power users",
-      "properties": ["zoom", "maxCrawledPlacesPerSearch"]
-    }
-  ]
+  "required": ["searchTerm", "location"]
 }
