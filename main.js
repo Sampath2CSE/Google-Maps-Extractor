@@ -269,10 +269,10 @@ Actor.main(async () => {
         const crawler = new CheerioCrawler({
             requestQueue,
             maxConcurrency: 2,
-            handlePageTimeoutSecs: 30,
+            requestHandlerTimeoutSecs: 30,
             maxRequestRetries: 2,
             
-            handlePageFunction: async ({ $, request, response }) => {
+            requestHandler: async ({ $, request, response }) => {
                 const { segment, searchTerm, scrollPage } = request.userData;
                 const startTime = Date.now();
                 
@@ -370,7 +370,7 @@ Actor.main(async () => {
                 }
             },
             
-            handleFailedRequestFunction: async ({ request, error }) => {
+            failedRequestHandler: async ({ request, error }) => {
                 requestsFailed++;
                 log.error(`Request failed: ${request.url} - ${error.message}`);
             }
