@@ -1,5 +1,5 @@
-# Use the official Apify SDK image with Node 20
-FROM apify/actor-node:20
+# Use the official Apify SDK image with Node 20 and Puppeteer/Chrome
+FROM apify/actor-node-puppeteer-chrome:20
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
