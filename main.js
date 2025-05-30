@@ -1,21 +1,33 @@
 // main.js - Google Maps Extractor Apify Actor
 const { Actor, log } = require('apify');
 const { CheerioCrawler } = require('crawlee');
-const { gotScraping } = require('got-scraping');
+const https = require('https');
 
 // Geolocation utilities
 class GeolocationHelper {
     static async getCoordinates(location) {
         try {
-            const response = await gotScraping({
-                url: `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`,
-                responseType: 'json',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                }
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
+            
+            const response = await new Promise((resolve, reject) => {
+                https.get(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (compatible; Google Maps Extractor/1.0)'
+                    }
+                }, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => {
+                        data += chunk;
+                    });
+                    res.on('end', () => {
+                        resolve(data);
+                    });
+                }).on('error', (error) => {
+                    reject(error);
+                });
             });
             
-            const data = response.body;
+            const data = JSON.parse(response);
             if (data && data.length > 0) {
                 const result = data[0];
                 const coords = {
