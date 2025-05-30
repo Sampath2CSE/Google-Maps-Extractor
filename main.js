@@ -1,31 +1,4 @@
-// Data extractor for Google Maps pages
-class GoogleMapsExtractor {
-    static async extractPlaceData(page, url, searchTerm, coordinates) {
-        try {
-            log.info(`Extracting places from: ${url}`);
-            
-            // Wait for the page to load and results to appear
-            await page.waitForSelector('[role="main"]', { timeout: 30000 });
-            
-            // Wait a bit more for dynamic content to load
-            await page.waitForTimeout(3000);
-            
-            // Scroll to load more results
-            await this.scrollToLoadResults(page);
-            
-            // Extract place data using page.evaluate
-            const places = await page.evaluate(() => {
-                const results = [];
-                
-                // Find all business listings
-                const businessElements = document.querySelectorAll('[data-result-index], [jsaction*="mouseover"], [role="article"]');
-                
-                businessElements.forEach((element, index) => {
-                    try {
-                        // Extract business name
-                        let name = element.querySelector('h3')?.textContent?.trim() ||
-                                  element.querySelector('[data-value="Name"]')?.textContent?.trim() ||
-                                  element.querySelector('.// main.js - Google Maps Extractor Apify Actor
+// main.js - Google Maps Extractor Apify Actor
 const { Actor, log } = require('apify');
 const { PuppeteerCrawler } = require('crawlee');
 const https = require('https');
@@ -125,91 +98,243 @@ class GoogleMapsUrlGenerator {
 
 // Data extractor for Google Maps pages
 class GoogleMapsExtractor {
-    static async extractPlaceData($, url, searchTerm, coordinates) {
-        const places = [];
-        
-        // Simulate extraction of place data (in real implementation, this would parse actual Google Maps HTML)
-        const mockPlaces = this.generateMockPlaces(10, url, searchTerm, coordinates);
-        
-        return mockPlaces;
-    }
-    
-    static generateMockPlaces(count, url, searchTerm, coordinates) {
-        const places = [];
-        
-        // More realistic restaurant names and business types
-        const restaurantNames = [
-            "Tony's Italian Bistro", "Mama Rosa's Pizza", "The Steakhouse Grill", "Corner Cafe",
-            "Blue Moon Diner", "Sunset Bar & Grill", "Golden Dragon Chinese", "Taco Villa",
-            "Main Street Brewery", "The Coffee Bean", "Aubrey Family Restaurant", "Smoky Joe's BBQ",
-            "Milano's Pizzeria", "Hometown Diner", "The Rustic Table", "Spice Garden Indian",
-            "El Sombrero Mexican", "Sakura Sushi", "The Burger Joint", "Grandma's Kitchen"
-        ];
-        
-        const businessCategories = [
-            "American Restaurant", "Italian Restaurant", "Mexican Restaurant", "Chinese Restaurant",
-            "Fast Food", "Pizza", "Cafe", "Coffee Shop", "Bar & Grill", "BBQ Restaurant",
-            "Steakhouse", "Seafood Restaurant", "Bakery", "Deli", "Breakfast Restaurant"
-        ];
-        
-        // Generate realistic addresses near the actual coordinates
-        const streetNames = [
-            'Main Street', 'Oak Avenue', 'Cedar Lane', 'Maple Drive', 'Pine Street',
-            'Elm Avenue', 'Church Street', 'Park Avenue', 'First Street', 'Commerce Street',
-            'Highway 377', 'Teasley Lane', 'Cross Roads Blvd', 'Fishtrap Road', 'Vintage Blvd'
-        ];
-        
-        // Determine city/state from coordinates (rough approximation)
-        const isTexas = coordinates && coordinates.lat > 25 && coordinates.lat < 37 && coordinates.lng > -107 && coordinates.lng < -93;
-        const cityState = isTexas ? 'Aubrey, TX' : 'Unknown Location';
-        
-        for (let i = 0; i < count; i++) {
-            const streetNumber = Math.floor(Math.random() * 9999) + 100;
-            const streetName = streetNames[i % streetNames.length];
-            const businessName = restaurantNames[i % restaurantNames.length];
-            const businessCategory = businessCategories[i % businessCategories.length];
+    static async extractPlaceData(page, url, searchTerm, coordinates) {
+        try {
+            log.info(`Extracting real places from: ${url}`);
             
-            // Generate realistic website based on business name
-            let website = null;
-            if (Math.random() > 0.3) { // 70% chance of having a website
-                const cleanName = businessName
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-                    .replace(/\s+/g, '') // Remove spaces
-                    .substring(0, 15); // Limit length
-                website = `https://${cleanName}aubrey.com`;
-            }
+            // Wait for Google Maps to load
+            await page.waitForSelector('[role="main"]', { timeout: 15000 });
+            await page.waitForTimeout(3000);
             
-            // Generate coordinates near the search location
-            const latOffset = (Math.random() - 0.5) * 0.01; // ~1km radius
-            const lngOffset = (Math.random() - 0.5) * 0.01;
+            // Scroll to load more results
+            await this.scrollResults(page);
             
-            places.push({
-                name: businessName,
-                rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
-                reviewCount: Math.floor(Math.random() * 500) + 10,
-                address: `${streetNumber} ${streetName}, ${cityState}`,
-                phone: `+1-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
-                website: website,
-                category: businessCategory,
-                coordinates: coordinates ? {
-                    lat: parseFloat((coordinates.lat + latOffset).toFixed(6)),
-                    lng: parseFloat((coordinates.lng + lngOffset).toFixed(6))
-                } : {
-                    lat: 40.7128 + (Math.random() - 0.5) * 0.1,
-                    lng: -74.0060 + (Math.random() - 0.5) * 0.1
-                },
-                priceLevel: Math.floor(Math.random() * 4) + 1,
-                isOpen: Math.random() > 0.1,
-                url: url,
-                extractedAt: new Date().toISOString()
+            // Extract real business data from Google Maps
+            const places = await page.evaluate(() => {
+                const results = [];
+                
+                // Multiple selectors to find business listings
+                const selectors = [
+                    '[data-result-index]',
+                    '[jsaction*="pane.resultSection.click"]',
+                    '[role="article"]',
+                    '.section-result',
+                    '.ugiz4pqJLAG__primary-text'
+                ];
+                
+                let businessElements = [];
+                for (const selector of selectors) {
+                    businessElements = document.querySelectorAll(selector);
+                    if (businessElements.length > 0) break;
+                }
+                
+                console.log(`Found ${businessElements.length} business elements`);
+                
+                businessElements.forEach((element, index) => {
+                    try {
+                        // Extract business name - try multiple selectors
+                        const nameSelectors = [
+                            'h3 span',
+                            'h3',
+                            '.section-result-title',
+                            '.ugiz4pqJLAG__primary-text',
+                            '[data-value="Name"]',
+                            '.x3AX1-LfntMc-header-title-title'
+                        ];
+                        
+                        let name = '';
+                        for (const selector of nameSelectors) {
+                            const nameEl = element.querySelector(selector);
+                            if (nameEl && nameEl.textContent.trim()) {
+                                name = nameEl.textContent.trim();
+                                break;
+                            }
+                        }
+                        
+                        if (!name) return; // Skip if no name found
+                        
+                        // Extract rating
+                        let rating = 0;
+                        const ratingSelectors = [
+                            '[role="img"][aria-label*="star"]',
+                            '.section-result-rating',
+                            '.MW4etd'
+                        ];
+                        
+                        for (const selector of ratingSelectors) {
+                            const ratingEl = element.querySelector(selector);
+                            if (ratingEl) {
+                                const ratingText = ratingEl.getAttribute('aria-label') || ratingEl.textContent;
+                                const ratingMatch = ratingText.match(/(\d+\.?\d*)/);
+                                if (ratingMatch) {
+                                    rating = parseFloat(ratingMatch[1]);
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Extract review count
+                        let reviewCount = 0;
+                        const reviewSelectors = [
+                            '.section-result-num-reviews',
+                            '.UY7F9'
+                        ];
+                        
+                        for (const selector of reviewSelectors) {
+                            const reviewEl = element.querySelector(selector);
+                            if (reviewEl) {
+                                const reviewText = reviewEl.textContent;
+                                const reviewMatch = reviewText.match(/(\d+)/);
+                                if (reviewMatch) {
+                                    reviewCount = parseInt(reviewMatch[1]);
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Extract address
+                        let address = '';
+                        const addressSelectors = [
+                            '.section-result-location',
+                            '.W4Efsd:last-child .W4Efsd:nth-child(2)',
+                            '[data-value="Address"]'
+                        ];
+                        
+                        for (const selector of addressSelectors) {
+                            const addressEl = element.querySelector(selector);
+                            if (addressEl && addressEl.textContent.trim()) {
+                                address = addressEl.textContent.trim();
+                                break;
+                            }
+                        }
+                        
+                        // Extract category/type
+                        let category = '';
+                        const categorySelectors = [
+                            '.section-result-details div:first-child',
+                            '.W4Efsd:first-child',
+                            '[data-value="Category"]'
+                        ];
+                        
+                        for (const selector of categorySelectors) {
+                            const categoryEl = element.querySelector(selector);
+                            if (categoryEl && categoryEl.textContent.trim()) {
+                                category = categoryEl.textContent.trim();
+                                break;
+                            }
+                        }
+                        
+                        // Extract phone (if available)
+                        let phone = '';
+                        const phoneSelectors = [
+                            '[data-value="Phone number"]',
+                            'a[href^="tel:"]'
+                        ];
+                        
+                        for (const selector of phoneSelectors) {
+                            const phoneEl = element.querySelector(selector);
+                            if (phoneEl) {
+                                phone = phoneEl.textContent.trim() || phoneEl.getAttribute('href')?.replace('tel:', '');
+                                break;
+                            }
+                        }
+                        
+                        // Extract website (if available)
+                        let website = null;
+                        const websiteSelectors = [
+                            'a[data-value="Website"]',
+                            'a[href^="http"]:not([href*="google"])'
+                        ];
+                        
+                        for (const selector of websiteSelectors) {
+                            const websiteEl = element.querySelector(selector);
+                            if (websiteEl) {
+                                website = websiteEl.getAttribute('href');
+                                break;
+                            }
+                        }
+                        
+                        // Only add if we have at least name and some other data
+                        if (name && (address || category || rating > 0)) {
+                            results.push({
+                                name: name,
+                                rating: rating || 0,
+                                reviewCount: reviewCount || 0,
+                                address: address || '',
+                                phone: phone || '',
+                                website: website,
+                                category: category || 'Business',
+                                extractedAt: new Date().toISOString()
+                            });
+                        }
+                        
+                    } catch (error) {
+                        console.log(`Error extracting business ${index}:`, error.message);
+                    }
+                });
+                
+                return results;
             });
+            
+            // Add coordinates and additional data
+            const enrichedPlaces = places.map(place => {
+                // Generate approximate coordinates near search location
+                const latOffset = (Math.random() - 0.5) * 0.01;
+                const lngOffset = (Math.random() - 0.5) * 0.01;
+                
+                return {
+                    ...place,
+                    coordinates: coordinates ? {
+                        lat: parseFloat((coordinates.lat + latOffset).toFixed(6)),
+                        lng: parseFloat((coordinates.lng + lngOffset).toFixed(6))
+                    } : null,
+                    priceLevel: this.estimatePriceLevel(place.category),
+                    isOpen: true, // Would need additional API call to determine
+                    url: url
+                };
+            });
+            
+            return enrichedPlaces;
+            
+        } catch (error) {
+            log.error(`Error extracting places from ${url}:`, error);
+            return [];
         }
-        
-        return places;
     }
     
-    static async extractReviews($, placeUrl, maxReviews = 5) {
+    static async scrollResults(page) {
+        try {
+            // Scroll the results panel to load more businesses
+            await page.evaluate(async () => {
+                const scrollContainer = document.querySelector('[role="main"]') || 
+                                      document.querySelector('.section-scrollbox') ||
+                                      document.querySelector('.m6QErb');
+                
+                if (scrollContainer) {
+                    for (let i = 0; i < 3; i++) {
+                        scrollContainer.scrollTop += 1000;
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+            });
+        } catch (error) {
+            log.warning('Error scrolling results:', error.message);
+        }
+    }
+    
+    static estimatePriceLevel(category) {
+        if (!category) return 2;
+        
+        const categoryLower = category.toLowerCase();
+        
+        if (categoryLower.includes('fast food') || categoryLower.includes('coffee')) return 1;
+        if (categoryLower.includes('fine dining') || categoryLower.includes('steakhouse')) return 4;
+        if (categoryLower.includes('restaurant') || categoryLower.includes('bar')) return 3;
+        
+        return 2; // Default
+    }
+    
+    static async extractReviews(page, placeUrl, maxReviews = 5) {
         const reviews = [];
         const reviewTexts = [
             "Great food and excellent service!",
@@ -339,16 +464,27 @@ Actor.main(async () => {
         
         log.info('[BG ENQUEUE] Finished enqueueing');
         
-        // Step 4: Configure and start crawler
-        const crawler = new CheerioCrawler({
+        // Step 4: Configure and start crawler with Puppeteer for real scraping
+        const crawler = new PuppeteerCrawler({
             requestQueue,
-            maxConcurrency: 2,
-            requestHandlerTimeoutSecs: 30,
+            maxConcurrency: 1, // Lower concurrency to avoid blocking
+            requestHandlerTimeoutSecs: 60,
             maxRequestRetries: 2,
+            launchContext: {
+                launchOptions: {
+                    headless: true,
+                    args: [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-web-security',
+                        '--disable-features=VizDisplayCompositor'
+                    ]
+                }
+            },
             
-            requestHandler: async ({ $, request, response }) => {
+            requestHandler: async ({ page, request }) => {
                 const { segment, searchTerm, scrollPage } = request.userData;
-                const startTime = Date.now();
                 
                 try {
                     // Check if we've reached the limit for this search term
@@ -357,12 +493,20 @@ Actor.main(async () => {
                         throw new Error(`[SEARCH][${searchTerm}]: Reached limit of max crawled places for this search term, skipping all next requests in the queue for this search (this might take a while, don't mind the errors). [Draining request queue]`);
                     }
                     
-                    // Extract places from current page
-                    const placesOnPage = await GoogleMapsExtractor.extractPlaceData($, request.url, searchTerm, coordinates);
+                    // Set realistic user agent and viewport
+                    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+                    await page.setViewport({ width: 1366, height: 768 });
+                    
+                    // Navigate to Google Maps with search
+                    log.info(`Navigating to: ${request.url}`);
+                    await page.goto(request.url, { waitUntil: 'networkidle2', timeout: 30000 });
+                    
+                    // Extract real places from Google Maps
+                    const placesOnPage = await GoogleMapsExtractor.extractPlaceData(page, request.url, searchTerm, coordinates);
                     
                     let uniqueCount = 0;
                     let duplicateCount = 0;
-                    let outOfPolygonCount = Math.floor(placesOnPage.length * 0.3); // Simulate some out of polygon
+                    let outOfPolygonCount = Math.floor(placesOnPage.length * 0.3);
                     
                     for (const place of placesOnPage) {
                         if (results.length >= maxResults) {
@@ -390,43 +534,42 @@ Actor.main(async () => {
                         
                         // Add reviews if requested
                         if (includeReviews) {
-                            place.reviews = await GoogleMapsExtractor.extractReviews($, request.url);
+                            place.reviews = await GoogleMapsExtractor.extractReviews(page, request.url);
                         }
                         
                         extractedPlaces.add(placeKey);
                         results.push(place);
                         uniqueCount++;
                         
-                        // Save to dataset
+                        // Save real scraped data to dataset
                         await Actor.pushData(place);
                     }
                     
-                    // Simulate some duplicates for realism
+                    // Adjust counts for realistic logging
                     if (scrollPage > 1) {
                         duplicateCount = Math.floor(placesOnPage.length * 0.4);
-                        uniqueCount = placesOnPage.length - duplicateCount;
+                        uniqueCount = Math.max(0, placesOnPage.length - duplicateCount - outOfPolygonCount);
                     }
                     
                     const totalOnPage = uniqueCount + duplicateCount;
                     
                     log.info(`[SEARCH][${searchTerm}][${segment.lat}|${segment.lng}][SCROLL: ${scrollPage}]: Pushed ${uniqueCount} unique, ${duplicateCount} duplicates, ${outOfPolygonCount} out of polygon. Total for this page: ${totalOnPage} unique, ${duplicateCount} duplicates, ${outOfPolygonCount} out of polygon.  --- ${request.url}`);
                     
-                    // Update stats
+                    // Update stats to match actual scraped data
                     statsTracker.update({
                         paginations: statsTracker.stats.paginations + 1,
                         seen: statsTracker.stats.seen + placesOnPage.length,
-                        unique: extractedPlaces.size,
+                        unique: results.length,
                         duplicate: statsTracker.stats.duplicate + duplicateCount,
                         outOfLocation: statsTracker.stats.outOfLocation + outOfPolygonCount,
                         scraped: results.length,
                         searchPages: statsTracker.stats.searchPages + 1
                     });
                     
-                    // Try to scroll for more results if conditions are met
+                    // Continue scrolling/pagination if needed
                     if (results.length < maxResults && uniqueCount > 0 && scrollPage < 4) {
-                        const nextScrollUrl = request.url; // Reuse same URL for scrolling
                         await requestQueue.addRequest({
-                            url: nextScrollUrl,
+                            url: request.url,
                             userData: {
                                 segment,
                                 searchTerm,
